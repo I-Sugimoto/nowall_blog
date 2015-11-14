@@ -8,10 +8,11 @@ require_once('functions.php');
 $dbh = connectDb(); // 特にエラー表示がなければOK
 
 // レコードの取得
-$sql = "select * from tasks";
+// 'order by updated_at desc':「更新日時が新しい順」という意味(キャンプより引用)
+$sql = "select * from posts order by updated_at desc";
 $stmt = $dbh->prepare($sql);
 $stmt->execute();
-$tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // 新規タスク追加
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -53,8 +54,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <h1>Blog</h1>
 <a href="add.php">新規記事投稿</a>
 <h1>記事一覧</h1>
-
-<hr>
-
+  <?php foreach ($posts as $post ) : ?>
+    <li style = "list-style-type : none;">
+      <?php echo h($post['title']) ?><br>
+      <?php echo h($post['body']) ?><br>
+      投稿日時: <?php echo h($post['updated_at']) ?>
+      <hr>
+    </li>
+  <?php endforeach; ?>
 </body>
 </html>
